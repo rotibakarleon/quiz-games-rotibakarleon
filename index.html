@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Roti Bakar Leon</title>
+
+  <link rel="icon" href="logo.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #fffbe6, #ffd900);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: white;
+      border-radius: 24px;
+      padding: 30px 20px;
+      width: 95%;
+      max-width: 480px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+      text-align: center;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    img.logo {
+      max-width: 100%;
+      max-height: 100px;
+      margin-bottom: 20px;
+      object-fit: contain;
+    }
+
+    h1 {
+      color: #ff8800;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .question {
+      font-size: 18px;
+      margin: 20px 0;
+      color: #333;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .choices button,
+    .start-btn,
+    .restart-btn {
+      background: #ff9900;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .choices button:hover,
+    .start-btn:hover,
+    .restart-btn:hover {
+      background: #ffea00;
+      transform: scale(1.03);
+    }
+
+    #score, .final-score {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      color: #444;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (min-width: 600px) {
+      h1 { font-size: 26px; }
+      .choices button, .start-btn, .restart-btn {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🟠 Cover Page -->
+  <div class="container" id="cover-page">
+    <img src="logo.png" alt="Logo Roti Bakar Leon" class="logo" />
+    <h1>🍞 Quiz Roti Bakar Leon</h1>
+    <p>Uji pengetahuanmu tentang roti bakar favorit Gen Z!</p>
+    <button class="start-btn" onclick="startQuiz()">Mulai Quiz</button>
+  </div>
+
+  <!-- 🟡 Quiz Page -->
+  <div class="container hidden" id="quiz-page">
+    <img src="logo.png" alt="Logo" class="logo" />
+    <h1>Quiz Dimulai!</h1>
+    <div class="question" id="question">Pertanyaan akan muncul di sini</div>
+    <div class="choices" id="choices"></div>
+    <div id="score">Skor: 0</div>
+  </div>
+
+  <!-- 🟢 End Page -->
+  <div class="container hidden" id="end-page">
+    <img src="logo.png" alt="Logo" class="logo" />
+    <h1>🎉 Selesai!</h1>
+    <p class="final-score" id="final-score">Skormu: 0</p>
+    <button class="restart-btn" onclick="restartQuiz()">Main Lagi</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "🍞 Apa menu best seller Roti Bakar Leon?",
+        choices: ["Choco Cheese", "Cookies n Cream", "Choco Crunchy", "Tiramisu Caramel"],
+        answer: "Choco Cheese"
+      },
+      {
+        question: "🎨 Apa warna khas branding Roti Bakar Leon?",
+        choices: ["Merah", "Biru", "Hijau", "Kuning"],
+        answer: "Kuning"
+      },
+      {
+        question: "🛵 Aplikasi pesan makanan berwarna oranye?",
+        choices: ["GoFood", "GrabFood", "ShopeeFood", "OkeFood"],
+        answer: "ShopeeFood"
+      },
+      {
+        question: "🤑 Nama promo beli 2 lebih hemat dari Leon?",
+        choices: ["Double Digit", "Double Combo", "Double Couple", "Double Date"],
+        answer: "Double Combo"
+      },
+      {
+        question: "⚡ Promo 20% di ShopeeFood oleh Leon?",
+        choices: ["Flash Sale", "Flash Mob", "Flash light", "Flash Disk"],
+        answer: "Flash Sale"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function startQuiz() {
+      document.getElementById('cover-page').classList.add('hidden');
+      document.getElementById('quiz-page').classList.remove('hidden');
+      currentQuestion = 0;
+      score = 0;
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('question').textContent = q.question;
+      document.getElementById('score').textContent = "Skor: " + score;
+      const choicesDiv = document.getElementById('choices');
+      choicesDiv.innerHTML = '';
+      q.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.textContent = choice;
+        btn.onclick = () => checkAnswer(choice);
+        choicesDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const correct = questions[currentQuestion].answer;
+      if (selected === correct) {
+        score += 20;
+        alert("✅ Benar!");
+      } else {
+        alert("❌ Salah! Jawaban benar: " + correct);
+      }
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        endQuiz();
+      }
+    }
+
+    function endQuiz() {
+      document.getElementById('quiz-page').classList.add('hidden');
+      document.getElementById('end-page').classList.remove('hidden');
+      document.getElementById('final-score').textContent = "Skormu: " + score;
+    }
+
+    function restartQuiz() {
+      document.getElementById('end-page').classList.add('hidden');
+      document.getElementById('cover-page').classList.remove('hidden');
+    }
+  </script>
+
+</body>
+</html>
